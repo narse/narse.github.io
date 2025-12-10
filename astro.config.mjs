@@ -33,7 +33,7 @@ export default defineConfig({
     alpinejs(),
     partytown(),
     sitemap({
-      site: "https://skyscript.buyastro.website",
+      site: "https://skyscript.vercel.app",
     }),
   ],
   vite: {

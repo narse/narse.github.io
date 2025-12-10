@@ -12,7 +12,7 @@ const { post } = Astro.props;
 
 <divx>
   <p class="mb-2 text-sm text-gray-500">
-    {post.data.publishedDate.toISOString().substring(0, 10)}
+    {post.data.publishedAt.toISOString().substring(0, 10)}
   </p>
   <h5
     class="text-sm font-medium text-gray-800 sm:text-base"
@@ -21,12 +21,12 @@ const { post } = Astro.props;
     {post.data.title}
   </h5>
   <p class="mt-1 text-sm text-gray-500">
-    {post.data.metaDescription}
+    {post.data.description}
   </p>
   <p class="mt-1">
     <a
       class="text-sm text-gray-500 underline hover:text-gray-800 hover:decoration-2 focus:decoration-2 focus:outline-none"
-      href={`/post/${post.slug}`}
+      href={`/post/${post.data.slug}`}
     >
       Continue reading
     </a>

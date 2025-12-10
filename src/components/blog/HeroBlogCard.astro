@@ -8,13 +8,22 @@ interface Props {
 const { post } = Astro.props;
 ---
 
-<a class="group flex flex-col focus:outline-none" href={`/post/${post.slug}`}>
+<a
+  class="group flex flex-col focus:outline-none"
+  href={`/post/${post.data.slug}`}
+>
   <div class="relative overflow-hidden rounded-xl pt-[50%] sm:pt-[70%]">
-    <Image
-      class="absolute start-0 top-0 size-full rounded-xl object-cover transition-transform duration-500 ease-in-out group-hover:scale-105 group-focus:scale-105"
-      src={post.data.image}
-      alt="Blog Image"
-    />
+    {
+      post.data.coverImage && (
+        <Image
+          class="absolute start-0 top-0 size-full rounded-xl object-cover transition-transform duration-500 ease-in-out group-hover:scale-105 group-focus:scale-105"
+          src={post.data.coverImage}
+          alt="Blog Image"
+          width={500}
+          height={500}
+        />
+      )
+    }
     <span
       class="absolute end-0 top-0 rounded-es-xl rounded-se-xl bg-gray-800 px-3 py-1.5 text-xs font-medium text-white"
     >
@@ -30,7 +39,7 @@ const { post } = Astro.props;
       {post.data.title}
     </h3>
     <p class="mt-3 text-gray-800">
-      {post.data.metaDescription}
+      {post.data.description}
     </p>
     <p
       class="mt-5 inline-flex items-center gap-x-1 text-sm font-medium text-indigo-600 decoration-2 group-hover:underline group-focus:underline"

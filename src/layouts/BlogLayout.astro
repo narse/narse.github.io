@@ -3,9 +3,7 @@ import Hero from "@components/home/Hero.astro";
 import Layout from "./Layout.astro";
 import { getCollection } from "astro:content";
 
-const sponsoredPosts = await getCollection("posts", ({ data }) => {
-  return data.isSponsored === true;
-});
+const sponsoredPosts = await getCollection("posts");
 
 interface Props {
   title: string;

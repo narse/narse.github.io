@@ -146,21 +146,21 @@ const originUrl = Astro.url.origin;
           <a
             class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
             target="_blank"
-            href={`http://twitter.com/share?text=${post.data.title}&url=${originUrl}/post/${post.slug}&hashtags=${post.data.category}`}
+            href={`http://twitter.com/share?text=${post.data.title}&url=${originUrl}/post/${post.data.slug}&hashtags=${post.data.category}`}
           >
             Share on Twitter
           </a>
           <a
             class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
             target="_blank"
-            href={`http://www.facebook.com/sharer.php?u=${originUrl}/post/${post.slug}`}
+            href={`http://www.facebook.com/sharer.php?u=${originUrl}/post/${post.data.slug}`}
           >
             Share on Facebook
           </a>
           <a
             class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
             target="_blank"
-            href={`http://www.linkedin.com/shareArticle?mini=true&url=${originUrl}/post/${post.slug}&title=${post.data.title}&summary=${post.data.metaDescription}&source=${originUrl}`}
+            href={`http://www.linkedin.com/shareArticle?mini=true&url=${originUrl}/post/${post.data.slug}&title=${post.data.title}&summary=${post.data.description}&source=${originUrl}`}
           >
             Share on LinkedIn
           </a>
