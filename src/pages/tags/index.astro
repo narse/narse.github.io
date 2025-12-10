@@ -1,0 +1,19 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import getUniqueTags from "@utils/getUniqueTags";
+
+const posts = await getCollection("posts");
+
+const tags = getUniqueTags(posts);
+---
+
+<Layout title={`Tags`}>
+  <div>
+    <div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6">
+      <ul class="flex flex-col gap-4 text-xl">
+        {tags.map(({ tag, tagName }) => <a href={`/tags/${tag}`}>{tagName}</a>)}
+      </ul>
+    </div>
+  </div>
+</Layout>

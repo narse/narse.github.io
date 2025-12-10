@@ -1,0 +1,21 @@
+---
+import BlogCard from "@components/blog/BlogCard.astro";
+import type { CollectionEntry } from "astro:content";
+interface Props {
+  posts: CollectionEntry<"posts">[];
+}
+
+const { posts } = Astro.props;
+---
+
+<!-- Card Blog -->
+<div class="mx-auto max-w-340 px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+  <!-- Grid -->
+  <div class="grid gap-6 lg:grid-cols-2">
+    <!-- Cards -->
+    {posts.map((post) => <BlogCard post={post} />)}
+    <!-- End Cards -->
+  </div>
+  <!-- End Grid -->
+</div>
+<!-- End Card Blog -->

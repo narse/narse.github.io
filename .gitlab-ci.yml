@@ -1,0 +1,48 @@
+# The Docker image that will be used to build your app
+image: node:lts
+
+before_script:
+  # Install pnpm before running the build
+  - npm install -g pnpm
+  # Install dependencies using pnpm
+  - pnpm install
+
+pages:
+  script:
+    # Build your app using pnpm
+    - pnpm run build
+  artifacts:
+    paths:
+      # The folder that contains the built files to be published. This must be called "public".
+      - public
+  only:
+    # Trigger a new build and deploy only when there is a push to the below branch(es)
+    - main
+
+deploy_preview:
+  stage: deploy
+  except:
+    - main
+  script:
+    # Install Vercel CLI
+    - npm install --global vercel
+    # Pull environment settings from Vercel
+    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+    # Build using Vercel with pnpm
+    - vercel build --token=$VERCEL_TOKEN
+    # Deploy the prebuilt app
+    - vercel deploy --prebuilt --token=$VERCEL_TOKEN
+
+deploy_production:
+  stage: deploy
+  only:
+    - main
+  script:
+    # Install Vercel CLI
+    - npm install --global vercel
+    # Pull environment settings from Vercel
+    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+    # Build for production
+    - vercel build --prod --token=$VERCEL_TOKEN
+    # Deploy the prebuilt production app
+    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN

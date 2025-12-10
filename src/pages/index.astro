@@ -1,0 +1,23 @@
+---
+import BlogRow from "@components/home/BlogRow.astro";
+import FooterBlogRow from "@components/home/FooterBlogRow.astro";
+import Pagination from "@components/blog/Pagination.astro";
+import { getCollection } from "astro:content";
+import BlogLayout from "@layouts/BlogLayout.astro";
+
+const blogPosts = await getCollection("posts");
+
+const sortedPosts = blogPosts.sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+);
+---
+
+<BlogLayout title="Welcome to Astro.">
+  <BlogRow posts={sortedPosts.slice(0, 2)} />
+  <FooterBlogRow posts={sortedPosts.slice(2, 5)} />
+  <Pagination
+    currentPage={1}
+    totalPages={Math.ceil(blogPosts.length / 5)}
+    nextUrl="/post/2"
+  />
+</BlogLayout>

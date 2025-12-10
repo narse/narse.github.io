@@ -1,0 +1,56 @@
+---
+import "../styles/global.css";
+
+import Head from "@components/Head.astro";
+import Footer from "@components/shared/Footer.astro";
+import Header from "@components/shared/Header.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <Head title={title} />
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: "Merienda";
+    src: url("/fonts/merienda.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "ComicNeue";
+    src: url("/fonts/comic-neue.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Merienda", cursive;
+  }
+
+  body {
+    font-family: "ComicNeue", sans-serif;
+  }
+</style>
