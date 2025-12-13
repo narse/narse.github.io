@@ -2,17 +2,23 @@
 import Hero from "@components/home/Hero.astro";
 import Layout from "./Layout.astro";
 import { getCollection } from "astro:content";
+import type { SEOProps } from "@/constants";
 
-const sponsoredPosts = await getCollection("posts");
+const allPosts = await getCollection("posts");
 
-interface Props {
+// Get featured posts sorted by date (newest first)
+const featuredPosts = allPosts
+  .filter((post) => post.data.featured)
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+interface Props extends SEOProps {
   title: string;
 }
 
-const { title } = Astro.props;
+const { title, ...seoProps } = Astro.props;
 ---
 
-<Layout title={title}>
-  <Hero posts={sponsoredPosts} />
+<Layout title={title} {...seoProps}>
+  <Hero posts={featuredPosts.slice(0, 2)} />
   <slot />
 </Layout>

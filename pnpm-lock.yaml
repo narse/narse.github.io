@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@astracms/astro-loader':
-        specifier: ^0.1.2
-        version: 0.1.2(astro@5.16.5(@types/node@24.10.2)(@vercel/functions@2.2.13)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)(yaml@2.8.2))
+        specifier: ^1.0.2
+        version: 1.0.2(astro@5.16.5(@types/node@24.10.2)(@vercel/functions@2.2.13)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)(yaml@2.8.2))
       '@astrojs/alpinejs':
         specifier: ^0.4.9
         version: 0.4.9(@types/alpinejs@3.13.11)(alpinejs@3.15.2)
@@ -84,13 +84,13 @@ importers:
 
 packages:
 
-  '@astracms/astro-loader@0.1.2':
-    resolution: {integrity: sha512-9k8y3aJHBsy9PKpomUHFwjEUqcSKShiDWDiA6HKVC3WA9yZAepITd2gK5ocFw0C2T0+RgTALZP8ZF2LM6W4ksQ==}
+  '@astracms/astro-loader@1.0.2':
+    resolution: {integrity: sha512-XOaYCnZ5RJ0oYfLVg6YhUD6736YEfytv+eMmwi+JzYwK9HcWzRUpN+J5EXNOX+qbPW8oW/4HMABTh9PhNctvEw==}
     peerDependencies:
       astro: ^5.0.0
 
-  '@astracms/core@0.1.0':
-    resolution: {integrity: sha512-7fFvIPjKgQLyoINHfEsVCTstn9dsz47/Mq89b5tn57Ao1juEv8qM5nayavM0bVEF2BINQ/s1klWb9Uk0eAZd0w==}
+  '@astracms/core@1.0.2':
+    resolution: {integrity: sha512-/Gu8iMa4JBU8wB1Me4HgIRdt7e8DKMJyvP84+Octt1gNsuYiQICUiL0QzBaH6P2/D70xj1XWC3nBM3qHnLRYQA==}
 
   '@astrojs/alpinejs@0.4.9':
     resolution: {integrity: sha512-fvKBAugn7yIngEKfdk6vL3ZlcVKtQvFXCZznG28OikGanKN5W+PkRPIdKaW/0gThRU2FyCemgzyHgyFjsH8dTA==}
@@ -2929,13 +2929,13 @@ packages:
 
 snapshots:
 
-  '@astracms/astro-loader@0.1.2(astro@5.16.5(@types/node@24.10.2)(@vercel/functions@2.2.13)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)(yaml@2.8.2))':
+  '@astracms/astro-loader@1.0.2(astro@5.16.5(@types/node@24.10.2)(@vercel/functions@2.2.13)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)(yaml@2.8.2))':
     dependencies:
-      '@astracms/core': 0.1.0
+      '@astracms/core': 1.0.2
       astro: 5.16.5(@types/node@24.10.2)(@vercel/functions@2.2.13)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3)(yaml@2.8.2)
       zod: 3.25.76
 
-  '@astracms/core@0.1.0':
+  '@astracms/core@1.0.2':
     dependencies:
       zod: 3.25.76
 

@@ -4,20 +4,35 @@ import FooterBlogRow from "@components/home/FooterBlogRow.astro";
 import Pagination from "@components/blog/Pagination.astro";
 import { getCollection } from "astro:content";
 import BlogLayout from "@layouts/BlogLayout.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "@/constants";
 
-const blogPosts = await getCollection("posts");
+const allPosts = await getCollection("posts");
 
-const sortedPosts = blogPosts.sort(
-  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
-);
+// Get first 2 featured posts (shown in Hero via BlogLayout)
+const featuredForHero = allPosts
+  .filter((post) => post.data.featured)
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 2);
+
+// Get IDs of posts shown in Hero to exclude them
+const heroPostIds = new Set(featuredForHero.map((p) => p.id));
+
+// All other posts (excluding Hero's 2), sorted by date
+const remainingPosts = allPosts
+  .filter((post) => !heroPostIds.has(post.id))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+// Homepage shows first 5 posts (2 in BlogRow + 3 in FooterBlogRow)
+const postsPerPage = 5;
+const totalPages = Math.ceil(remainingPosts.length / postsPerPage);
 ---
 
-<BlogLayout title="Welcome to Astro.">
-  <BlogRow posts={sortedPosts.slice(0, 2)} />
-  <FooterBlogRow posts={sortedPosts.slice(2, 5)} />
+<BlogLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <BlogRow posts={remainingPosts.slice(0, 2)} />
+  <FooterBlogRow posts={remainingPosts.slice(2, 5)} />
   <Pagination
     currentPage={1}
-    totalPages={Math.ceil(blogPosts.length / 5)}
-    nextUrl="/post/2"
+    totalPages={totalPages}
+    nextUrl={totalPages > 1 ? "/post/1" : undefined}
   />
 </BlogLayout>
