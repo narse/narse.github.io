@@ -56,22 +56,6 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
   <meta name="generator" content={Astro.generator} />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-  <!-- Preload Critical Resources -->
-  <link
-    rel="preload"
-    href="/fonts/merienda.woff"
-    as="font"
-    type="font/woff"
-    crossorigin
-  />
-  <link
-    rel="preload"
-    href="/fonts/comic-neue.woff"
-    as="font"
-    type="font/woff"
-    crossorigin
-  />
-
   <!-- SEO Meta -->
   <title>{fullTitle}</title>
   <meta name="description" content={description} />

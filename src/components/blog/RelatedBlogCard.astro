@@ -8,11 +8,21 @@ interface Props {
 
 const { post } = Astro.props;
 // const author = await getEntry(post.data.author);
+
+// Helper function to format dates
+const formatDate = (date: Date | undefined) => {
+  if (!date) return "Unknown date";
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+};
 ---
 
-<divx>
+<div>
   <p class="mb-2 text-sm text-gray-500">
-    {post.data.publishedAt.toISOString().substring(0, 10)}
+    {formatDate(post.data.publishedAt)}
   </p>
   <h5 class="text-sm font-medium text-gray-800 sm:text-base">
     {post.data.title}
@@ -28,4 +38,4 @@ const { post } = Astro.props;
       Continue reading
     </a>
   </p>
-</divx>
+</div>

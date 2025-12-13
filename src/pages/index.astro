@@ -1,5 +1,4 @@
 ---
-import BlogRow from "@components/home/BlogRow.astro";
 import FooterBlogRow from "@components/home/FooterBlogRow.astro";
 import Pagination from "@components/blog/Pagination.astro";
 import { getCollection } from "astro:content";
@@ -22,14 +21,13 @@ const remainingPosts = allPosts
   .filter((post) => !heroPostIds.has(post.id))
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
-// Homepage shows first 5 posts (2 in BlogRow + 3 in FooterBlogRow)
-const postsPerPage = 5;
+// Homepage shows first 3 posts in FooterBlogRow
+const postsPerPage = 3;
 const totalPages = Math.ceil(remainingPosts.length / postsPerPage);
 ---
 
 <BlogLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <BlogRow posts={remainingPosts.slice(0, 2)} />
-  <FooterBlogRow posts={remainingPosts.slice(2, 5)} />
+  <FooterBlogRow posts={remainingPosts.slice(0, 3)} />
   <Pagination
     currentPage={1}
     totalPages={totalPages}

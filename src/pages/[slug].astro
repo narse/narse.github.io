@@ -19,6 +19,16 @@ const { Content } = await render(entry);
 const pageTitle = entry.data.title;
 const pageDescription = entry.data.description || "";
 const pageImage = entry.data.coverImage || undefined;
+
+// Helper function to format dates
+const formatDate = (date: Date | undefined) => {
+  if (!date) return "Unknown date";
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+};
 ---
 
 <Layout title={pageTitle} description={pageDescription} image={pageImage}>
@@ -34,13 +44,15 @@ const pageImage = entry.data.coverImage || undefined;
           </h2>
 
           <div class="flex items-center gap-x-5">
-            <span
-              class="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-gray-100 px-3 py-1 text-xs text-gray-800 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none sm:px-4 sm:py-2 sm:text-sm"
-            >
-              {entry.data.category.name}
-            </span>
+            {
+              entry.data.category && (
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-gray-100 px-3 py-1 text-xs text-gray-800 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none sm:px-4 sm:py-2 sm:text-sm">
+                  {entry.data.category.name}
+                </span>
+              )
+            }
             <p class="text-xs text-gray-800 sm:text-sm">
-              {entry.data.publishedAt.toISOString().substring(0, 10)}
+              {formatDate(entry.data.publishedAt)}
             </p>
           </div>
         </div>

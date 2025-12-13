@@ -8,7 +8,8 @@ import RelatedBlogCard from "@components/blog/RelatedBlogCard.astro";
 import StickyActionBar from "@components/blog/StickyActionBar.astro";
 import TagsFooter from "@components/blog/TagsFooter.astro";
 import Layout from "@layouts/Layout.astro";
-import { getCollection, render, type CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("posts");
@@ -32,7 +33,25 @@ const postAuthor = entry.data.authors?.[0]?.name || "";
 const publishedTime = entry.data.publishedAt?.toISOString();
 const modifiedTime = entry.data.updatedAt?.toISOString();
 
-let relatedPosts: CollectionEntry<"posts">[] = [];
+// Helper function to format dates in a user-friendly way
+const formatDate = (date: Date | undefined) => {
+  if (!date) return "Unknown date";
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+};
+
+// Fetch related posts from the same category (excluding current post)
+const allPosts = await getCollection("posts");
+const relatedPosts = allPosts
+  .filter(
+    (post) =>
+      post.data.slug !== entry.data.slug &&
+      post.data.category?.id === entry.data.category?.id
+  )
+  .slice(0, 3);
 ---
 
 <Layout
@@ -56,15 +75,26 @@ let relatedPosts: CollectionEntry<"posts">[] = [];
             <h2 class="text-3xl font-bold lg:text-5xl">
               {entry.data.title}
             </h2>
+            {
+              postImage && (
+                <Image
+                  src={postImage}
+                  alt={postImageAlt}
+                  class="w-full rounded-lg"
+                  width={700}
+                  height={500}
+                />
+              )
+            }
 
             <div class="flex items-center gap-x-5">
               <span
                 class="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-gray-100 px-3 py-1 text-xs text-gray-800 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none sm:px-4 sm:py-2 sm:text-sm"
               >
-                {entry.data.category.name}
+                {entry.data.category?.name || "Uncategorized"}
               </span>
               <p class="text-xs text-gray-800 sm:text-sm">
-                {entry.data.publishedAt.toISOString().substring(0, 10)}
+                {formatDate(entry.data.publishedAt)}
               </p>
             </div>
           </div>

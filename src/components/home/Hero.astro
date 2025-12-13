@@ -15,11 +15,7 @@ const { posts } = Astro.props;
   <!-- Grid -->
   <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     <!-- Hero Card -->
-    {
-      posts.map((post, index) => (
-        <HeroBlogCard post={post} priority={index === 0} />
-      ))
-    }
+    {posts.map((post) => <HeroBlogCard post={post} />)}
     <!-- End Hero Card -->
     <!-- Promo Card -->
     <PromoCard />

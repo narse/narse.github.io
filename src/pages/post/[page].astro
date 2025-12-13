@@ -4,9 +4,9 @@ export const prerender = true;
 import { getCollection, type CollectionEntry } from "astro:content";
 import type { GetStaticPaths, Page } from "astro";
 import BlogLayout from "@layouts/BlogLayout.astro";
-import BlogRow from "@components/home/BlogRow.astro";
 import FooterBlogRow from "@components/home/FooterBlogRow.astro";
 import Pagination from "@components/blog/Pagination.astro";
+import { SITE_TITLE } from "@/constants";
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
   const allPosts = await getCollection("posts");
@@ -27,8 +27,8 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
       (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
     );
 
-  // Skip first 5 posts (shown on homepage), paginate the rest
-  return paginate(remainingPosts.slice(5), { pageSize: 5 });
+  // Skip first 3 posts (shown on homepage), paginate the rest
+  return paginate(remainingPosts.slice(3), { pageSize: 3 });
 };
 
 type Props = {
@@ -46,15 +46,12 @@ const totalPages = Math.ceil(page.total / page.size) + 1;
 const prevUrl = page.currentPage === 1 ? "/" : page.url.prev;
 ---
 
-<BlogLayout title="Welcome to Astro.">
-  <main>
-    <BlogRow posts={page.data.slice(0, 2)} />
-    {page.data.length > 2 && <FooterBlogRow posts={page.data.slice(2, 5)} />}
-    <Pagination
-      currentPage={actualCurrentPage}
-      totalPages={totalPages}
-      nextUrl={page.url.next}
-      prevUrl={prevUrl}
-    />
-  </main>
+<BlogLayout title={SITE_TITLE}>
+  <FooterBlogRow posts={page.data.slice(0, 3)} />
+  <Pagination
+    currentPage={actualCurrentPage}
+    totalPages={totalPages}
+    nextUrl={page.url.next}
+    prevUrl={prevUrl}
+  />
 </BlogLayout>
