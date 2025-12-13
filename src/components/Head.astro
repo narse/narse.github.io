@@ -15,6 +15,7 @@ import {
   TWITTER_CARD,
   TWITTER_SITE,
   TWITTER_CREATOR,
+  GA_MEASUREMENT_ID,
   type SEOProps,
 } from "@/constants";
 
@@ -111,4 +112,19 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
   <meta name="twitter:image:alt" content={imageAlt} />
   {TWITTER_SITE && <meta name="twitter:site" content={TWITTER_SITE} />}
   {TWITTER_CREATOR && <meta name="twitter:creator" content={TWITTER_CREATOR} />}
+
+  <!-- Google Analytics (gtag) with Partytown -->
+  <script
+    is:inline
+    type="text/partytown"
+    src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+  ></script>
+  <script is:inline type="text/partytown" define:vars={{ GA_MEASUREMENT_ID }}>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", GA_MEASUREMENT_ID);
+  </script>
 </head>

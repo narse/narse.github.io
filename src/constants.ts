@@ -11,6 +11,11 @@ export const SITE_URL = "https://skyscript.com"; // Your site's base URL (no tra
 export const SITE_LANGUAGE = "en";
 
 // ======================
+// Analytics
+// ======================
+export const GA_MEASUREMENT_ID = "G-JDBTVGMMZH"; // Replace with your Google Analytics Measurement ID
+
+// ======================
 // SEO & Meta Tags
 // ======================
 export const META_TITLE_TEMPLATE = "%s | SkyScript"; // %s will be replaced with page title
