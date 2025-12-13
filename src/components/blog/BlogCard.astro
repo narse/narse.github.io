@@ -14,7 +14,7 @@ const { post } = Astro.props;
   href={`/post/${post.data.slug}`}
 >
   <div
-    class="relative h-[350px] w-full shrink-0 overflow-hidden rounded-xl before:absolute before:inset-x-0 before:z-[1] before:size-full before:bg-gradient-to-t before:from-gray-900/70"
+    class="relative h-[350px] w-full shrink-0 overflow-hidden rounded-xl before:absolute before:inset-x-0 before:z-1 before:size-full before:bg-linear-to-t before:from-gray-900/70"
   >
     {
       post.data.coverImage && (
