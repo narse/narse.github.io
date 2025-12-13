@@ -13,7 +13,7 @@ const { posts } = Astro.props;
   <!-- Grid -->
   <div class="grid gap-6 lg:grid-cols-2">
     <!-- Cards -->
-    {posts.map((post) => <BlogCard post={post} />)}
+    {posts.map((post, index) => <BlogCard post={post} priority={index < 2} />)}
     <!-- End Cards -->
   </div>
   <!-- End Grid -->

@@ -11,11 +11,15 @@ const { posts } = Astro.props;
 ---
 
 <!-- Card Blog -->
-<div class="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+<div class="mx-auto max-w-340 px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
   <!-- Grid -->
   <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     <!-- Hero Card -->
-    {posts.map((post) => <HeroBlogCard post={post} />)}
+    {
+      posts.map((post, index) => (
+        <HeroBlogCard post={post} priority={index === 0} />
+      ))
+    }
     <!-- End Hero Card -->
     <!-- Promo Card -->
     <PromoCard />

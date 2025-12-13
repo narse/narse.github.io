@@ -10,17 +10,12 @@ const originUrl = Astro.url.origin;
 ---
 
 <!-- Sticky Action Group -->
-<div
-  class="sticky inset-x-0 bottom-6 text-center"
-  x-data="{ showTooltip: null, isOpen: false }"
->
+<div class="sticky inset-x-0 bottom-6 text-center" id="sticky-action-bar">
   <div class="inline-block rounded-full bg-white px-4 py-3 shadow-md">
     <div class="flex items-center gap-x-1.5">
       <!-- Button with Tooltip -->
-      <div class="relative inline-block" x-data="{ isTooltipVisible: false }">
+      <div class="group/tooltip relative inline-block">
         <button
-          @mouseenter="isTooltipVisible = true"
-          @mouseleave="isTooltipVisible = false"
           type="button"
           class="flex items-center gap-x-2 text-sm text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none"
         >
@@ -42,8 +37,7 @@ const originUrl = Astro.url.origin;
           875
         </button>
         <span
-          x-show="isTooltipVisible"
-          class="absolute z-10 inline-block rounded bg-white px-2 py-1 text-xs font-medium text-gray-800 opacity-100 shadow-sm transition-opacity"
+          class="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-white px-2 py-1 text-xs font-medium text-gray-800 opacity-0 shadow-sm transition-opacity group-hover/tooltip:opacity-100"
           role="tooltip"
         >
           Like
@@ -53,10 +47,8 @@ const originUrl = Astro.url.origin;
       <div class="mx-3 block h-3 border-e border-gray-300"></div>
 
       <!-- Button with Tooltip -->
-      <div class="relative inline-block" x-data="{ isTooltipVisible: false }">
+      <div class="group/tooltip relative inline-block">
         <button
-          @mouseenter="isTooltipVisible = true"
-          @mouseleave="isTooltipVisible = false"
           type="button"
           class="flex items-center gap-x-2 text-sm text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none"
         >
@@ -74,25 +66,23 @@ const originUrl = Astro.url.origin;
           16
         </button>
         <span
-          x-show="isTooltipVisible"
-          class="absolute z-10 inline-block rounded bg-white px-2 py-1 text-xs font-medium text-gray-800 opacity-100 shadow-sm transition-opacity"
+          class="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-white px-2 py-1 text-xs font-medium text-gray-800 opacity-0 shadow-sm transition-opacity group-hover/tooltip:opacity-100"
           role="tooltip"
         >
-          Usefull
+          Useful
         </span>
       </div>
       <!-- Divider -->
       <div class="mx-3 block h-3 border-e border-gray-400"></div>
 
       <!-- Dropdown Button -->
-      <div class="relative inline-block">
+      <div class="group/dropdown relative inline-block">
         <button
-          @click="isOpen = !isOpen"
-          id="hs-blog-article-share-dropdown"
+          id="share-dropdown-btn"
           type="button"
           class="flex items-center gap-x-2 text-sm text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none"
           aria-haspopup="menu"
-          :aria-expanded="isOpen"
+          aria-expanded="false"
         >
           <svg
             class="size-4 shrink-0"
@@ -112,37 +102,12 @@ const originUrl = Astro.url.origin;
           Share
         </button>
         <div
-          x-show="isOpen"
-          @click.outside="isOpen = false"
-          class="absolute -top-36 right-0 z-10 mb-1 w-56 rounded-xl bg-white p-2 shadow-md transition-opacity"
+          id="share-dropdown-menu"
+          class="invisible absolute -top-36 right-0 z-10 mb-1 w-56 rounded-xl bg-white p-2 opacity-0 shadow-md transition-all group-focus-within/dropdown:visible group-focus-within/dropdown:opacity-100"
           role="menu"
           aria-orientation="vertical"
         >
           <!-- Dropdown Items -->
-          <!-- <a
-            class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
-            href="#"
-          >
-            <svg
-              class="size-4 shrink-0"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              ><path
-                d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-              ></path><path
-                d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-              ></path></svg
-            >
-            Copy link
-          </a>
-          <div class="my-2 border-t border-gray-200"></div> -->
           <a
             class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100"
             target="_blank"
@@ -170,3 +135,35 @@ const originUrl = Astro.url.origin;
   </div>
 </div>
 <!-- End Sticky Action Group -->
+
+<script>
+  // Simple vanilla JS for dropdown toggle
+  document.addEventListener("astro:page-load", () => {
+    const btn = document.getElementById("share-dropdown-btn");
+    const menu = document.getElementById("share-dropdown-menu");
+
+    if (btn && menu) {
+      btn.addEventListener("click", () => {
+        const isOpen = menu.classList.contains("!visible");
+        if (isOpen) {
+          menu.classList.remove("!visible", "!opacity-100");
+          btn.setAttribute("aria-expanded", "false");
+        } else {
+          menu.classList.add("!visible", "!opacity-100");
+          btn.setAttribute("aria-expanded", "true");
+        }
+      });
+
+      // Close on outside click
+      document.addEventListener("click", (e) => {
+        if (
+          !btn.contains(e.target as Node) &&
+          !menu.contains(e.target as Node)
+        ) {
+          menu.classList.remove("!visible", "!opacity-100");
+          btn.setAttribute("aria-expanded", "false");
+        }
+      });
+    }
+  });
+</script>

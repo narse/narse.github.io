@@ -1,5 +1,4 @@
 ---
-import { ViewTransitions } from "astro:transitions";
 import {
   SITE_NAME,
   SITE_URL,
@@ -57,6 +56,22 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
   <meta name="generator" content={Astro.generator} />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+  <!-- Preload Critical Resources -->
+  <link
+    rel="preload"
+    href="/fonts/merienda.woff"
+    as="font"
+    type="font/woff"
+    crossorigin
+  />
+  <link
+    rel="preload"
+    href="/fonts/comic-neue.woff"
+    as="font"
+    type="font/woff"
+    crossorigin
+  />
+
   <!-- SEO Meta -->
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
@@ -112,7 +127,4 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
   <meta name="twitter:image:alt" content={imageAlt} />
   {TWITTER_SITE && <meta name="twitter:site" content={TWITTER_SITE} />}
   {TWITTER_CREATOR && <meta name="twitter:creator" content={TWITTER_CREATOR} />}
-
-  <!-- Astro View Transitions -->
-  <ViewTransitions />
 </head>

@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from "@layouts/Layout.astro";
-import { getCollection, render, type CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("page");
@@ -29,10 +29,7 @@ const pageImage = entry.data.coverImage || undefined;
     <article class="">
       <div class="py-8 lg:pe-8">
         <div class="space-y-5 lg:space-y-8">
-          <h2
-            class="text-3xl font-bold lg:text-5xl"
-            transition:name={entry.data.title}
-          >
+          <h2 class="text-3xl font-bold lg:text-5xl">
             {entry.data.title}
           </h2>
 

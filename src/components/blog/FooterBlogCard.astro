@@ -31,7 +31,7 @@ const { post } = Astro.props;
     >
       <a href={`/post/${post.data.slug}`}>
         <span class="absolute inset-0"></span>
-        <span transition:name={post.data.title}>{post.data.title}</span>
+        <span>{post.data.title}</span>
       </a>
     </h3>
     <p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
