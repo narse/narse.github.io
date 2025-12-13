@@ -21,6 +21,8 @@
 - [x] View Transitions API support
 - [x] Automatic sitemap generation
 
+![LightRoom Test](/assets/pagespeed-insights.png)
+
 ## Project Structure
 
 ```
