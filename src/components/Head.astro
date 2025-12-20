@@ -15,7 +15,6 @@ import {
   TWITTER_CARD,
   TWITTER_SITE,
   TWITTER_CREATOR,
-  TWITTER_CREATOR,
   GA_MEASUREMENT_ID,
   GOOGLE_ADSENSE_ID,
   type SEOProps,
@@ -119,6 +118,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
   {
     GOOGLE_ADSENSE_ID && (
       <script
+        is:inline
         async
         src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${GOOGLE_ADSENSE_ID}`}
         crossorigin="anonymous"
