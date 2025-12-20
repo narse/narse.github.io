@@ -25,8 +25,8 @@ pnpm-debug.log*
 .idea/
 .vercel
 
-# Scripts folder (Local only)
-scripts/
-gov24.bat
+# scripts/gov24_content_generator.py
+scripts/gov24_content_generator.py
+scripts/processed_gov24_services.txt
 write.bat
 auto_blogging.bat
