@@ -26,7 +26,7 @@ pnpm-debug.log*
 .vercel
 
 # scripts/gov24_content_generator.py
-scripts/gov24_content_generator.py
+# scripts/gov24_content_generator.py
 scripts/processed_gov24_services.txt
 write.bat
 auto_blogging.bat
