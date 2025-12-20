@@ -1,3 +1,87 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
 
 @plugin "@tailwindcss/typography";
+
+/* 기본 폰트 설정 - 실손24 스타일 */
+:root {
+  --color-primary: #3771e0;
+  --color-primary-dark: #2858b8;
+  --color-secondary: #5bc0de;
+  --color-accent: #00c7ae;
+  --color-text: #333333;
+  --color-text-light: #666666;
+  --color-bg: #ffffff;
+  --color-bg-light: #f8f9fa;
+  --color-border: #e9ecef;
+}
+
+* {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, '맑은 고딕', 'Malgun Gothic', '나눔고딕', 'NanumGothic', sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.7;
+}
+
+/* 헤더 스타일 */
+header {
+  background: linear-gradient(135deg, #3771e0 0%, #5bc0de 100%);
+  border-bottom: none;
+}
+
+header h1 {
+  color: white !important;
+}
+
+header p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 카드 스타일 */
+article {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+article:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+/* 버튼/링크 색상 */
+a {
+  color: var(--color-primary);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+/* 태그/뱃지 스타일 */
+.rounded-full {
+  background: linear-gradient(135deg, #e8f4fd 0%, #e0f7f5 100%);
+  color: var(--color-primary);
+  border-color: transparent;
+}
+
+/* 프로모 카드 강화 */
+.bg-gradient-to-br {
+  background: linear-gradient(135deg, #3771e0 0%, #00c7ae 50%, #5bc0de 100%);
+}
+
+/* Footer 스타일 */
+footer {
+  background: var(--color-bg-light);
+}
+
+/* 반응형 개선 */
+@media (max-width: 640px) {
+  header h1 {
+    font-size: 1.5rem;
+  }
+}

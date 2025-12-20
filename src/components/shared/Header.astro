@@ -1,25 +1,35 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from "@/constants";
+import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 ---
 
-<header class="border-b border-gray-200 bg-gray-50">
-  <div class="mx-auto max-w-340 px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+<header class="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500">
+  <div class="mx-auto max-w-340 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
     <div
       class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between"
     >
       <div>
-        <a href="/">
+        <a href="/" class="flex items-center gap-3">
+          <span class="text-4xl">🏛️</span>
           <h1
-            class="text-2xl font-medium text-gray-900 sm:text-3xl md:text-4xl"
+            class="text-2xl font-bold text-white sm:text-3xl md:text-4xl"
           >
-            {SITE_TITLE}
+            {SITE_NAME}
           </h1>
         </a>
 
-        <p class="mt-1.5 text-sm text-gray-500">
+        <p class="mt-2 text-sm text-white/80 md:text-base">
           {SITE_DESCRIPTION}
         </p>
       </div>
+      
+      <nav class="flex gap-4">
+        <a href="/" class="rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition">
+          홈
+        </a>
+        <a href="/post" class="rounded-full bg-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition">
+          전체 글
+        </a>
+      </nav>
     </div>
   </div>
 </header>
