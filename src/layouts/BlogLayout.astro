@@ -1,15 +1,5 @@
----
-import Hero from "@components/home/Hero.astro";
 import Layout from "./Layout.astro";
-import { getCollection } from "astro:content";
 import type { SEOProps } from "@/constants";
-
-const allPosts = await getCollection("posts");
-
-// Get featured posts sorted by date (newest first)
-const featuredPosts = allPosts
-  .filter((post) => post.data.featured)
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
 interface Props extends SEOProps {
   title: string;

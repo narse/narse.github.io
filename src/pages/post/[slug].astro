@@ -162,14 +162,14 @@ const relatedPosts = allPosts
 
 </script>
 
-<script define:vars={{ GOOGLE_ADSENSE_ID }}>
+<script is:inline define:vars={{ GOOGLE_ADSENSE_ID }}>
   if (GOOGLE_ADSENSE_ID) {
     document.addEventListener("DOMContentLoaded", () => {
       const content = document.querySelector(".prose");
       if (!content) return;
 
       const headings = content.querySelectorAll("h2, h3");
-      headings.forEach((heading, index) => {
+      headings.forEach((heading) => {
         // Create ad container
         const adContainer = document.createElement("div");
         adContainer.className = "my-8 flex justify-center overflow-hidden";
