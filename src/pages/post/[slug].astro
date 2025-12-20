@@ -168,20 +168,32 @@ const relatedPosts = allPosts
       const content = document.querySelector(".prose");
       if (!content) return;
 
+      // 사용자 요청: 슬롯 코드 5개를 받아 순차적으로 적용
+      // 현재는 1개만 제공되었으므로 첫 번째에 넣고, 나머지는 플레이스홀더로 둠 (사용자가 추가 필요)
+      const adSlotIds = [
+        "9361913951", // 1번 슬롯 (제공됨)
+        "9500680600", // 2번 슬롯 (임시: 동일 ID 사용, 추후 변경)
+        "9215322419", // 3번 슬롯
+        "4932609584", // 4번 슬롯
+        "5039586646", // 5번 슬롯
+      ];
+
       const headings = content.querySelectorAll("h2, h3");
-      headings.forEach((heading) => {
+      headings.forEach((heading, index) => {
+        // 순차적으로 슬롯 ID 선택 (Round Robin)
+        const slotId = adSlotIds[index % adSlotIds.length];
+
         // Create ad container
         const adContainer = document.createElement("div");
         adContainer.className = "my-8 flex justify-center overflow-hidden";
         adContainer.innerHTML = `
-          <!-- AdSense Unit -->
-          <!-- IMPORTANT: Replace data-ad-slot with your actual "In-article" ad unit ID from AdSense dashboard -->
+          <!-- AdSense Unit (Horizontal Responsive) -->
           <ins class="adsbygoogle"
-               style="display:block; text-align:center; min-width: 250px;"
-               data-ad-layout="in-article"
-               data-ad-format="fluid"
+               style="display:block"
                data-ad-client="${GOOGLE_ADSENSE_ID}"
-               data-ad-slot="9361913951"></ins>
+               data-ad-slot="${slotId}"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
         `;
         heading.after(adContainer);
         
