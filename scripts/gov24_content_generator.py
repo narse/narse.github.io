@@ -70,7 +70,10 @@ class Gov24ContentGenerator:
             )
             
             if response.text:
-                return self._parse_response(response.text, service_info)
+                if "SKIP" in response.text.upper() and len(response.text) < 20:
+                     logging.info(f"⏭️ 기간 만료 또는 유효하지 않은 서비스로 건너뜀: {info['name']}")
+                     return None
+                return self._parse_response(response.text, info)
         except Exception as e:
             logging.error(f"AI 생성 실패: {e}")
         
@@ -159,7 +162,15 @@ Aspect ratio: 1:1 (square)"""
         }
     
     def _create_prompt(self, info: dict) -> str:
-        return f"""정부 서비스 블로그 글을 Markdown으로 작성하세요. guide365.kr 스타일로 상세하고 전문적으로 작성해주세요.
+        # User context implies current date is late 2025
+        current_date_str = "2025-12-21"
+        
+        return f"""You are a professional government policy analyst. Verify the validity of this service relative to today's date ({current_date_str}).
+
+CRITICAL FILTERING RULE:
+1. If the service's application period has ALREADY ENDED before today ({current_date_str}), you MUST output only one word: SKIP
+2. If the service was only valid for a past year (e.g. 2023, 2024 specific) and not applicable to 2025/2026, output: SKIP
+3. Only proceed if the service is valid for late 2025 or 2026.
 
 서비스 정보:
 - 서비스명: {info['name']}
@@ -173,11 +184,13 @@ Aspect ratio: 1:1 (square)"""
 - 문의처: {info['contact']}
 - URL: {info['url']}
 
+If valid, write a detailed blog post in Markdown format (guide365.kr style).
 출력 형식 (정확히 따르세요):
 
-TITLE: (SEO 제목 40-60자, 느낌표/콜론 금지, 연도 포함 권장)
+TITLE: (SEO 제목 40-60자, 느낌표/콜론 금지, 2025년/2026년 키워드 포함)
 DESC: (메타설명 120-160자, 혜택과 신청 유도 포함)
 TAGS: 정부지원금, 복지혜택, 키워드1, 키워드2, 키워드3
+
 
 ## 🏛️ 서비스 개요 및 혜택
 
@@ -457,6 +470,11 @@ def run():
                 print("   ✍️ AI 콘텐츠 생성...")
                 
                 data = generator.generate_markdown_content(svc)
+                if not data:
+                    print("   ⏭️ 스킵됨 (기간 만료)")
+                    tracker.mark_processed(sid) # 다시 처리하지 않도록 기록
+                    continue
+                    
                 print(f"   ✓ 제목: {data['title'][:40]}...")
                 
                 # 썸네일 생성 (제목 텍스트 포함)

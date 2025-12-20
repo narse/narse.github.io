@@ -7,13 +7,11 @@ echo  🚀 대량 포스팅 작업 시작 (20개)
 echo  간격: 4분(240초)
 echo ========================================
 
-rem 1. Python 가상환경 활성화
+rem 1. Python 가상환경 활성화 (있는 경우에만)
 if exist ".venv\Scripts\activate.bat" (
     call .venv\Scripts\activate.bat
 ) else (
-    echo ❌ 가상환경을 찾을 수 없습니다. (.venv)
-    pause
-    exit /b
+    echo ℹ️ .venv 폴더가 없으므로 현재 활성화된 Python 환경을 사용합니다.
 )
 
 rem 2. 스크립트 실행 (20개, 240초 간격)
