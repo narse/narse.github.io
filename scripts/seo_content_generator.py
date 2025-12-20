@@ -1,0 +1,211 @@
+"""
+SEO 블로그 콘텐츠 자동 생성기
+Gemini API를 활용하여 SEO 최적화된 Markdown 파일 생성
+"""
+
+import os
+import re
+from datetime import datetime
+from pathlib import Path
+
+from dotenv import load_dotenv
+from google import genai
+from google.genai import types
+
+# 환경변수 로드
+load_dotenv()
+
+# Gemini 클라이언트 설정
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+# 콘텐츠 저장 경로
+CONTENT_DIR = Path(__file__).parent.parent / "src" / "content" / "posts"
+
+
+def slugify(text: str) -> str:
+    """한글/영어 텍스트를 URL-safe slug로 변환"""
+    # 영어는 소문자로, 공백은 하이픈으로
+    text = text.lower().strip()
+    text = re.sub(r'[^\w\s가-힣-]', '', text)
+    text = re.sub(r'[\s_]+', '-', text)
+    return text[:50]  # 최대 50자
+
+
+def generate_seo_content(keyword: str, additional_context: str = "") -> dict:
+    """
+    키워드를 기반으로 SEO 최적화 블로그 콘텐츠 생성
+    
+    Args:
+        keyword: 메인 키워드
+        additional_context: 추가 컨텍스트 (선택)
+    
+    Returns:
+        dict: title, description, content, tags
+    """
+    prompt = f"""당신은 SEO 전문 블로그 작가입니다. 
+다음 키워드에 대해 SEO 최적화된 블로그 글을 작성해주세요.
+
+키워드: {keyword}
+{f'추가 컨텍스트: {additional_context}' if additional_context else ''}
+
+## 요구사항:
+1. 제목: 클릭을 유도하는 매력적인 제목 (키워드 포함)
+2. 메타 설명: 150자 이내의 검색 결과용 설명
+3. 본문: 
+   - H2, H3 헤딩을 적절히 사용
+   - 1500자 이상의 풍부한 내용
+   - 자연스러운 키워드 배치
+   - 실용적인 정보와 팁 포함
+   - FAQ 섹션 포함
+4. 태그: 관련 키워드 5개
+
+## 출력 형식 (정확히 따라주세요):
+[TITLE]
+제목 내용
+[/TITLE]
+
+[DESCRIPTION]
+메타 설명 내용
+[/DESCRIPTION]
+
+[TAGS]
+태그1, 태그2, 태그3, 태그4, 태그5
+[/TAGS]
+
+[CONTENT]
+마크다운 형식의 본문
+[/CONTENT]
+"""
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            temperature=0.7,
+            max_output_tokens=4096,
+        )
+    )
+    
+    text = response.text
+    
+    # 파싱
+    title_match = re.search(r'\[TITLE\](.*?)\[/TITLE\]', text, re.DOTALL)
+    desc_match = re.search(r'\[DESCRIPTION\](.*?)\[/DESCRIPTION\]', text, re.DOTALL)
+    tags_match = re.search(r'\[TAGS\](.*?)\[/TAGS\]', text, re.DOTALL)
+    content_match = re.search(r'\[CONTENT\](.*?)\[/CONTENT\]', text, re.DOTALL)
+    
+    title = title_match.group(1).strip() if title_match else keyword
+    description = desc_match.group(1).strip() if desc_match else ""
+    tags = [t.strip() for t in tags_match.group(1).split(',')] if tags_match else [keyword]
+    content = content_match.group(1).strip() if content_match else text
+    
+    return {
+        "title": title,
+        "description": description,
+        "tags": tags,
+        "content": content
+    }
+
+
+def create_markdown_file(keyword: str, additional_context: str = "", author: str = "Admin") -> Path:
+    """
+    SEO 콘텐츠를 생성하고 Markdown 파일로 저장
+    
+    Args:
+        keyword: 메인 키워드
+        additional_context: 추가 컨텍스트
+        author: 작성자 이름
+    
+    Returns:
+        Path: 생성된 파일 경로
+    """
+    print(f"🔍 키워드 '{keyword}'로 콘텐츠 생성 중...")
+    
+    # 콘텐츠 생성
+    result = generate_seo_content(keyword, additional_context)
+    
+    # 파일명 생성
+    slug = slugify(result["title"])
+    date_prefix = datetime.now().strftime("%Y-%m-%d")
+    filename = f"{date_prefix}-{slug}.md"
+    filepath = CONTENT_DIR / filename
+    
+    # 디렉토리 생성
+    CONTENT_DIR.mkdir(parents=True, exist_ok=True)
+    
+    # Frontmatter + 본문 작성
+    tags_str = str(result["tags"]).replace("'", '"')
+    markdown_content = f'''---
+title: "{result["title"]}"
+description: "{result["description"]}"
+publishedAt: {datetime.now().strftime("%Y-%m-%d")}
+category: "blog"
+tags: {tags_str}
+author: "{author}"
+featured: false
+draft: false
+---
+
+{result["content"]}
+'''
+    
+    # 파일 저장
+    filepath.write_text(markdown_content, encoding="utf-8")
+    
+    print(f"✅ 파일 생성 완료: {filepath}")
+    return filepath
+
+
+def batch_generate(keywords: list[str], author: str = "Admin") -> list[Path]:
+    """
+    여러 키워드에 대해 일괄 콘텐츠 생성
+    
+    Args:
+        keywords: 키워드 목록
+        author: 작성자
+    
+    Returns:
+        list[Path]: 생성된 파일 경로 목록
+    """
+    created_files = []
+    
+    for i, keyword in enumerate(keywords, 1):
+        print(f"\n📝 [{i}/{len(keywords)}] 처리 중...")
+        try:
+            filepath = create_markdown_file(keyword, author=author)
+            created_files.append(filepath)
+        except Exception as e:
+            print(f"❌ '{keyword}' 처리 실패: {e}")
+    
+    print(f"\n🎉 완료! 총 {len(created_files)}개 파일 생성됨")
+    return created_files
+
+
+if __name__ == "__main__":
+    import sys
+    
+    if len(sys.argv) > 1:
+        # 명령줄 인자로 키워드 전달
+        keyword = " ".join(sys.argv[1:])
+        create_markdown_file(keyword)
+    else:
+        # 대화형 모드
+        print("=" * 50)
+        print("🚀 SEO 블로그 콘텐츠 자동 생성기")
+        print("=" * 50)
+        
+        while True:
+            keyword = input("\n키워드를 입력하세요 (종료: q): ").strip()
+            
+            if keyword.lower() == 'q':
+                print("👋 종료합니다.")
+                break
+            
+            if not keyword:
+                print("⚠️ 키워드를 입력해주세요.")
+                continue
+            
+            try:
+                create_markdown_file(keyword)
+            except Exception as e:
+                print(f"❌ 오류 발생: {e}")

@@ -1,15 +1,16 @@
 import { defineConfig } from "astro/config";
 
-import vercel from "@astrojs/vercel";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 import partytown from "@astrojs/partytown";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://skyscript.vercel.app",
+  site: "https://narse.github.io",
   integrations: [
-    sitemap(),
+    sitemap({
+      entryLimit: 45000,  // 한 파일에 모든 URL 포함
+    }),
     partytown({
       config: {
         forward: ["dataLayer.push"],
@@ -19,6 +20,5 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  output: "server",
-  adapter: vercel(),
+  output: "static",  // GitHub Pages용 정적 빌드
 });

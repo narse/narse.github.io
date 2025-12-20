@@ -1,18 +1,16 @@
 ---
 import type { CollectionEntry } from "astro:content";
-// import { getCollection, getEntries } from "astro:content";
-// import { getEntry } from "astro:content";
+
 interface Props {
   post: CollectionEntry<"posts">;
 }
 
 const { post } = Astro.props;
-// const author = await getEntry(post.data.author);
 
 // Helper function to format dates
 const formatDate = (date: Date | undefined) => {
   if (!date) return "Unknown date";
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -33,9 +31,9 @@ const formatDate = (date: Date | undefined) => {
   <p class="mt-1">
     <a
       class="text-sm text-gray-500 underline hover:text-gray-800 hover:decoration-2 focus:decoration-2 focus:outline-none"
-      href={`/post/${post.data.slug}`}
+      href={`/post/${post.id}`}
     >
-      Continue reading
+      계속 읽기
     </a>
   </p>
 </div>

@@ -1,15 +1,8 @@
 ---
 import { slugifyStr } from "@utils/slugify";
 
-type Tag = {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string | null;
-};
-
 type Props = {
-  tags: Tag[];
+  tags: string[];
 };
 
 const { tags } = Astro.props;
@@ -24,9 +17,9 @@ const { tags } = Astro.props;
       tags.map((tag) => (
         <a
           class="m-0.5 inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-gray-800 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
-          href={`/tags/${slugifyStr(tag.slug)}`}
+          href={`/tags/${slugifyStr(tag)}`}
         >
-          {tag.name}
+          {tag}
         </a>
       ))
     }

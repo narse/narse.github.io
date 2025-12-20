@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { Image } from "astro:assets";
+
 interface Props {
   post: CollectionEntry<"posts">;
 }
@@ -10,7 +10,7 @@ const { post } = Astro.props;
 // Helper function to format dates
 const formatDate = (date: Date | undefined) => {
   if (!date) return "Unknown date";
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -24,16 +24,16 @@ const formatDate = (date: Date | undefined) => {
       >{formatDate(post.data.publishedAt)}</time
     >
     {
-      post.data.tags?.map((tag) => (
+      post.data.tags?.slice(0, 2).map((tag) => (
         <span class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">
-          {tag.name}
+          {tag}
         </span>
       ))
     }
     {
       post.data.category && (
         <span class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">
-          {post.data.category.name}
+          {post.data.category}
         </span>
       )
     }
@@ -42,7 +42,7 @@ const formatDate = (date: Date | undefined) => {
     <h2
       class="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600"
     >
-      <a href={`/post/${post.data.slug}`}>
+      <a href={`/post/${post.id}`}>
         <span class="absolute inset-0"></span>
         <span>{post.data.title}</span>
       </a>
@@ -52,25 +52,11 @@ const formatDate = (date: Date | undefined) => {
     </p>
   </div>
   <div class="relative mt-8 flex items-center gap-x-4">
-    {
-      post.data.authors &&
-        post.data.authors.length > 0 &&
-        post.data.authors[0].image && (
-          <Image
-            src={post.data.authors[0].image}
-            alt={post.data.authors[0].name}
-            class="size-10 rounded-full bg-gray-50"
-            width={50}
-            height={50}
-          />
-        )
-    }
     <div class="text-sm leading-6">
       <p class="font-semibold text-gray-900">
         <span class="absolute inset-0"></span>
-        {post.data?.authors?.[0]?.name}
+        {post.data.author || "Admin"}
       </p>
-      <p class="text-gray-600">{post.data?.authors?.[0]?.bio}</p>
     </div>
   </div>
 </article>

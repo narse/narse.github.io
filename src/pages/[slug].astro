@@ -5,9 +5,9 @@ import Layout from "@layouts/Layout.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
-  const blogEntries = await getCollection("page");
-  return blogEntries.map((entry) => ({
-    params: { slug: entry.data.slug },
+  const pageEntries = await getCollection("page");
+  return pageEntries.map((entry) => ({
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
@@ -18,20 +18,9 @@ const { Content } = await render(entry);
 // Extract SEO data from page
 const pageTitle = entry.data.title;
 const pageDescription = entry.data.description || "";
-const pageImage = entry.data.coverImage || undefined;
-
-// Helper function to format dates
-const formatDate = (date: Date | undefined) => {
-  if (!date) return "Unknown date";
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
-};
 ---
 
-<Layout title={pageTitle} description={pageDescription} image={pageImage}>
+<Layout title={pageTitle} description={pageDescription}>
   <div
     class="mx-auto max-w-340 w-full px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14 font-sans"
   >
@@ -42,19 +31,6 @@ const formatDate = (date: Date | undefined) => {
           <h2 class="text-3xl font-bold lg:text-5xl">
             {entry.data.title}
           </h2>
-
-          <div class="flex items-center gap-x-5">
-            {
-              entry.data.category && (
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-gray-100 px-3 py-1 text-xs text-gray-800 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none sm:px-4 sm:py-2 sm:text-sm">
-                  {entry.data.category.name}
-                </span>
-              )
-            }
-            <p class="text-xs text-gray-800 sm:text-sm">
-              {formatDate(entry.data.publishedAt)}
-            </p>
-          </div>
         </div>
       </div>
       <div class="prose mb-4 max-w-full sm:mb-6">
@@ -64,19 +40,3 @@ const formatDate = (date: Date | undefined) => {
     <!-- End Content -->
   </div>
 </Layout>
-
-<script>
-  // Remove autoplay from videos when `prefers-reduced-motion: reduce`
-  const autoplayVideos = document.querySelectorAll("video[autoplay]");
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-
-  if (prefersReducedMotion) {
-    autoplayVideos.forEach((video) => {
-      video.removeAttribute("autoplay");
-      // Add controls attribute so user can still play the video if they want
-      video.setAttribute("controls", "true");
-    });
-  }
-</script>

@@ -1,11 +1,8 @@
 ---
 export const prerender = true;
 
-import AuthorCard from "@components/blog/AuthorCard.astro";
 import BlogNavigation from "@components/blog/BlogNavigation.astro";
 import NewsLatter from "@components/blog/NewsLatter.astro";
-import RelatedBlogCard from "@components/blog/RelatedBlogCard.astro";
-import StickyActionBar from "@components/blog/StickyActionBar.astro";
 import TagsFooter from "@components/blog/TagsFooter.astro";
 import Layout from "@layouts/Layout.astro";
 import { Image } from "astro:assets";
@@ -14,7 +11,7 @@ import { getCollection, render } from "astro:content";
 export async function getStaticPaths() {
   const blogEntries = await getCollection("posts");
   return blogEntries.map((entry) => ({
-    params: { slug: entry.data.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
@@ -27,16 +24,15 @@ const postTitle = entry.data.title;
 const postDescription = entry.data.description || "";
 const postImage = entry.data.coverImage || undefined;
 const postImageAlt = entry.data.title;
-const postTags =
-  entry.data.tags?.map((tag: { name: string }) => tag.name) || [];
-const postAuthor = entry.data.authors?.[0]?.name || "";
+const postTags = entry.data.tags || [];
+const postAuthor = entry.data.author || "Admin";
 const publishedTime = entry.data.publishedAt?.toISOString();
 const modifiedTime = entry.data.updatedAt?.toISOString();
 
 // Helper function to format dates in a user-friendly way
 const formatDate = (date: Date | undefined) => {
   if (!date) return "Unknown date";
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -48,8 +44,8 @@ const allPosts = await getCollection("posts");
 const relatedPosts = allPosts
   .filter(
     (post) =>
-      post.data.slug !== entry.data.slug &&
-      post.data.category?.id === entry.data.category?.id
+      post.id !== entry.id &&
+      post.data.category === entry.data.category
   )
   .slice(0, 3);
 ---
@@ -91,7 +87,7 @@ const relatedPosts = allPosts
               <span
                 class="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-gray-100 px-3 py-1 text-xs text-gray-800 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none sm:px-4 sm:py-2 sm:text-sm"
               >
-                {entry.data.category?.name || "Uncategorized"}
+                {entry.data.category || "Uncategorized"}
               </span>
               <p class="text-xs text-gray-800 sm:text-sm">
                 {formatDate(entry.data.publishedAt)}
@@ -115,19 +111,38 @@ const relatedPosts = allPosts
         class="lg:col-span-1 lg:size-full lg:bg-linear-to-r lg:from-gray-50 lg:via-transparent lg:to-transparent"
       >
         <div class="sticky start-0 top-0 py-8 lg:ps-8">
-          <!-- Avatar Media -->
-          <AuthorCard post={entry} />
-          <!-- End Avatar Media -->
+          <!-- Author Info -->
+          <div class="mb-6 flex items-center gap-4">
+            <div>
+              <p class="font-semibold text-gray-800">{postAuthor}</p>
+              <p class="text-sm text-gray-500">{formatDate(entry.data.publishedAt)}</p>
+            </div>
+          </div>
+          <!-- End Author Info -->
 
+          <!-- Related Posts -->
+          <h3 class="mb-4 text-lg font-semibold">관련 글</h3>
           <div class="flex flex-col gap-4 sm:gap-6">
-            {relatedPosts.map((post) => <RelatedBlogCard post={post} />)}
+            {relatedPosts.length > 0 ? (
+              relatedPosts.map((post) => (
+                <a href={`/post/${post.id}`} class="group block">
+                  <h4 class="text-sm font-medium text-gray-800 group-hover:text-blue-600">
+                    {post.data.title}
+                  </h4>
+                  <p class="mt-1 text-xs text-gray-500">
+                    {formatDate(post.data.publishedAt)}
+                  </p>
+                </a>
+              ))
+            ) : (
+              <p class="text-sm text-gray-500">관련 글이 없습니다.</p>
+            )}
           </div>
         </div>
       </div>
       <!-- End Sidebar -->
     </div>
   </div>
-  <StickyActionBar post={entry} />
 </Layout>
 
 <script>
@@ -140,7 +155,6 @@ const relatedPosts = allPosts
   if (prefersReducedMotion) {
     autoplayVideos.forEach((video) => {
       video.removeAttribute("autoplay");
-      // Add controls attribute so user can still play the video if they want
       video.setAttribute("controls", "true");
     });
   }

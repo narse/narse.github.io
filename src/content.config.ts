@@ -1,32 +1,31 @@
-import { defineCollection } from "astro:content";
-import { postsLoader, authorsLoader, tagsLoader } from "@astracms/astro-loader";
+import { defineCollection, z } from "astro:content";
+import { glob } from "astro/loaders";
 
-const config = {
-  apiKey: import.meta.env.ASTRACMS_API_KEY,
-};
+// 로컬 Markdown 파일 기반 콘텐츠 설정
+// 글은 src/content/posts/ 폴더에 .md 파일로 작성
 
 const posts = defineCollection({
-  loader: postsLoader({
-    ...config,
-    format: "markdown",
-    categories: ["blog"],
+  loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    coverImage: z.string().optional(),
+    category: z.string().default("blog"),
+    tags: z.array(z.string()).default([]),
+    author: z.string().default("Admin"),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
   }),
 });
 
 const page = defineCollection({
-  loader: postsLoader({
-    ...config,
-    format: "markdown",
-    categories: ["page"],
+  loader: glob({ pattern: "**/*.md", base: "./src/content/pages" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
   }),
 });
 
-const authors = defineCollection({
-  loader: authorsLoader(config),
-});
-
-const tags = defineCollection({
-  loader: tagsLoader(config),
-});
-
-export const collections = { posts, page, authors, tags };
+export const collections = { posts, page };
