@@ -397,14 +397,23 @@ def run():
     generator = Gov24ContentGenerator(gemini_key)
     tracker = DuplicateTracker()
     
-    try:
-        count = int(input("\n생성할 글 개수 (기본=5): ").strip() or "5")
-    except:
+def run():
+    import sys
+    is_auto = "--auto" in sys.argv
+
+    if is_auto:
+        print("\n🤖 자동 모드 실행 (기본 5개, 썸네일 생성)")
         count = 5
-    
-    # 썸네일 생성 여부
-    gen_thumb = input("썸네일 생성? (Y/n, 기본=Y): ").strip().lower()
-    gen_thumb = gen_thumb != 'n'
+        gen_thumb = True
+    else:
+        try:
+            count = int(input("\n생성할 글 개수 (기본=5): ").strip() or "5")
+        except:
+            count = 5
+        
+        # 썸네일 생성 여부
+        gen_thumb_input = input("썸네일 생성? (Y/n, 기본=Y): ").strip().lower()
+        gen_thumb = gen_thumb_input != 'n'
     
     print(f"\n📝 {count}개 글 생성 시작...")
     if gen_thumb:
