@@ -6,7 +6,7 @@ import partytown from "@astrojs/partytown";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://narse.github.io",
+  site: "https://gov24.guide365.kr",
   integrations: [
     sitemap({
       entryLimit: 45000,  // 한 파일에 모든 URL 포함
