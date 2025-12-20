@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import BlogLayout from "@layouts/BlogLayout.astro";
+import FooterBlogRow from "@components/home/FooterBlogRow.astro";
+import { slugifyStr } from "@utils/slugify";
+import { SITE_TITLE } from "@/constants";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  const allTags = posts
+    .flatMap((post) => post.data.tags || [])
+    .filter((tag) => Boolean(tag));
+    
+  const uniqueTags = [...new Set(allTags)];
+
+  return uniqueTags.map((tag) => {
+    const filteredPosts = posts.filter((post) =>
+      post.data.tags?.includes(tag)
+    );
+    return {
+      params: { tag: slugifyStr(tag) },
+      props: { tag, posts: filteredPosts },
+    };
+  });
+}
+
+const { tag, posts } = Astro.props;
+
+// Sort posts by date
+const sortedPosts = posts.sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+);
+---
+
+<BlogLayout title={`${tag} | ${SITE_TITLE}`} description={`${tag} 관련 글 목록입니다.`}>
+  <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
+    <div class="mx-auto mb-8 max-w-screen-sm text-center lg:mb-16">
+      <h2 class="mb-4 text-3xl font-extrabold tracking-tight text-gray-900 lg:text-4xl">
+        #{tag}
+      </h2>
+      <p class="font-light text-gray-500 sm:text-xl">
+        "{tag}" 태그와 관련된 글 {posts.length}개를 찾았습니다.
+      </p>
+    </div>
+    
+    <FooterBlogRow posts={sortedPosts} />
+  </div>
+</BlogLayout>
