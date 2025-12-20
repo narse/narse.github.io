@@ -19,6 +19,5 @@ const { title, ...seoProps } = Astro.props;
 ---
 
 <Layout title={title} {...seoProps}>
-  <Hero posts={featuredPosts.slice(0, 2)} />
   <slot />
 </Layout>

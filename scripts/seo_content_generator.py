@@ -5,12 +5,15 @@ Gemini API를 활용하여 SEO 최적화된 Markdown 파일 생성
 
 import os
 import re
+import io
+import base64
 from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from PIL import Image
 
 # 환경변수 로드
 load_dotenv()
@@ -20,15 +23,79 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 # 콘텐츠 저장 경로
 CONTENT_DIR = Path(__file__).parent.parent / "src" / "content" / "posts"
+PUBLIC_DIR = Path(__file__).parent.parent / "public" / "images" / "posts"
 
 
 def slugify(text: str) -> str:
     """한글/영어 텍스트를 URL-safe slug로 변환"""
-    # 영어는 소문자로, 공백은 하이픈으로
     text = text.lower().strip()
     text = re.sub(r'[^\w\s가-힣-]', '', text)
     text = re.sub(r'[\s_]+', '-', text)
-    return text[:50]  # 최대 50자
+    return text[:50]
+
+def generate_thumbnail(keyword: str, slug: str, title: str = None) -> str | None:
+    """Gemini 2.5 Flash Image로 아이소메트릭 썸네일 생성 (한글 제목 포함)"""
+    try:
+        print("   🎨 썸네일 생성 중...")
+        
+        display_title = title or keyword
+        if len(display_title) > 15:
+            display_title = display_title[:15]
+        
+        prompt = f"""Create a professional isometric 3D illustration thumbnail for a blog post.
+
+Topic: "{keyword}"
+
+1. Title Overlay (MUST):
+- Render the text "{display_title}" clearly at the TOP CENTER.
+- Font: Bold, modern Sans-serif Korean font (Malgun Gothic style).
+- Color: Dark Navy (#2c3e50) or White with shadow.
+- Size: Large and readable.
+
+2. Scene Description:
+- Isometric 3D miniature diorama style.
+- Soft pastel blue-gray background (#a8c5d9 to #c5d8e8).
+- Cute 3D characters and objects related to the topic.
+- Clean, modern, professional aesthetic.
+
+3. IMPORTANT CONSTRAINTS (NO TEXT IN SCENE):
+- DO NOT generate any text, letters, or numbers on buildings, signs, shirts, or objects.
+- The 3D scene elements must be completely text-free (clean surfaces).
+- The ONLY text allowed is the top title overlay.
+- No gibberish or illegible psuedo-text in the artwork.
+
+Aspect ratio: 1:1 (square)"""
+
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-exp",
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_modalities=['IMAGE', 'TEXT'],
+            )
+        )
+        
+        if response.candidates and response.candidates[0].content.parts:
+            for part in response.candidates[0].content.parts:
+                if hasattr(part, 'inline_data') and part.inline_data:
+                    PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
+                    image_filename = f"{slug}.png"
+                    image_path = PUBLIC_DIR / image_filename
+                    
+                    image_data = part.inline_data.data
+                    if isinstance(image_data, str):
+                        image_data = base64.b64decode(image_data)
+                    
+                    image_path.write_bytes(image_data)
+                    
+                    print(f"   ✓ 썸네일 저장: {image_filename}")
+                    return f"/images/posts/{image_filename}"
+        
+        print("   ⚠️ 이미지 생성 결과 없음")
+        return None
+        
+    except Exception as e:
+        print(f"   ⚠️ 썸네일 생성 실패: {str(e)[:60]}")
+        return None
 
 
 def generate_seo_content(keyword: str, additional_context: str = "") -> dict:
@@ -59,6 +126,14 @@ def generate_seo_content(keyword: str, additional_context: str = "") -> dict:
    - FAQ 섹션 포함
 4. 태그: 관련 키워드 5개
 
+guide365.kr 스타일을 참고하여 상세하고 전문적으로 작성해주세요.
+- 🏛️ 서론/개요
+- 👥 상세 내용
+- 📝 실용적인 팁/가이드
+- 📋 요약 및 결론
+- ❓ FAQ (자주 묻는 질문)
+형식으로 구성해주세요.
+
 ## 출력 형식 (정확히 따라주세요):
 [TITLE]
 제목 내용
@@ -78,11 +153,11 @@ def generate_seo_content(keyword: str, additional_context: str = "") -> dict:
 """
 
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-2.0-flash-exp",
         contents=prompt,
         config=types.GenerateContentConfig(
             temperature=0.7,
-            max_output_tokens=4096,
+            max_output_tokens=8192,
         )
     )
     
@@ -124,6 +199,12 @@ def create_markdown_file(keyword: str, additional_context: str = "", author: str
     # 콘텐츠 생성
     result = generate_seo_content(keyword, additional_context)
     
+    # 썸네일 생성
+    slug = slugify(result["title"])
+    cover_image = generate_thumbnail(keyword, slug, result["title"])
+    if cover_image:
+        result['coverImage'] = cover_image
+    
     # 파일명 생성
     slug = slugify(result["title"])
     date_prefix = datetime.now().strftime("%Y-%m-%d")
@@ -142,6 +223,7 @@ publishedAt: {datetime.now().strftime("%Y-%m-%d")}
 category: "blog"
 tags: {tags_str}
 author: "{author}"
+coverImage: "{result.get('coverImage', '')}"
 featured: false
 draft: false
 ---
@@ -207,5 +289,6 @@ if __name__ == "__main__":
             
             try:
                 create_markdown_file(keyword)
+                print("\\n✨ 글 작성이 완료되었습니다!")
             except Exception as e:
                 print(f"❌ 오류 발생: {e}")

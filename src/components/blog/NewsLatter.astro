@@ -1,46 +1,44 @@
-<div class="mx-auto max-w-6xl pb-10 md:pb-20">
-  <div
-    class="relative rounded-xl bg-gray-100 p-5 before:absolute before:start-0 before:top-0 before:h-full before:w-2/3 before:bg-[url('/svgs/banner-bg-gray.svg')] before:bg-contain before:bg-top before:bg-no-repeat sm:py-16"
-  >
-    <div class="relative mx-auto max-w-xl text-center">
-      <div class="mb-5">
-        <h2 class="text-2xl font-bold md:text-3xl">Subscribe</h2>
-        <p class="mt-3 text-gray-500">
-          Get all the latest SkyScript updates and news.
-        </p>
-      </div>
+---
+import type { CollectionEntry } from "astro:content";
 
-      <div>
-        <form>
-          <div>
-            <div class="flex flex-col gap-3 sm:flex-row">
-              <input
-                type="email"
-                name="email"
-                class="block w-full rounded-lg border-gray-200 px-4 py-3 text-sm focus:border-transparent focus:outline-none focus:ring-0 disabled:pointer-events-none disabled:opacity-50"
-                placeholder="Email address"
-                required
-              />
-              <input
-                type="submit"
-                value="Subscribe"
-                class="inline-flex items-center justify-center gap-x-2 rounded-lg border border-transparent bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 focus:bg-indigo-700 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-              />
-            </div>
+interface Props {
+  relatedPosts: CollectionEntry<"posts">[];
+}
 
-            <!-- field to prevent bot signups -->
-            <div style="position: absolute; left: -5000px;" aria-hidden="true">
-              <input
-                type="text"
-                name="b_eddd28397383718c2f15e15c2_b97f8fe839"
-                tabindex="-1"
-                value=""
-              />
-            </div>
-            <!-- end  field to prevent bot signups -->
-          </div>
-        </form>
+const { relatedPosts } = Astro.props;
+
+const formatDate = (date: Date | undefined) => {
+  if (!date) return "";
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+};
+---
+
+{relatedPosts.length > 0 && (
+  <div class="mx-auto max-w-6xl pb-10 md:pb-16">
+    <div class="rounded-xl bg-gradient-to-br from-blue-50 to-cyan-50 p-6 sm:p-8">
+      <h3 class="mb-6 text-xl font-bold text-gray-800">📚 관련 글 더 보기</h3>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {relatedPosts.map((post) => (
+          <a 
+            href={`/post/${post.id}`} 
+            class="group block rounded-lg bg-white p-4 shadow-sm transition hover:shadow-md hover:-translate-y-1"
+          >
+            <span class="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-600 mb-2">
+              {post.data.category}
+            </span>
+            <h4 class="font-medium text-gray-800 group-hover:text-blue-600 line-clamp-2">
+              {post.data.title}
+            </h4>
+            <p class="mt-2 text-xs text-gray-500">
+              {formatDate(post.data.publishedAt)}
+            </p>
+          </a>
+        ))}
       </div>
     </div>
   </div>
-</div>
+)}

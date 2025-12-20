@@ -7,6 +7,7 @@ import TagsFooter from "@components/blog/TagsFooter.astro";
 import Layout from "@layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { getCollection, render } from "astro:content";
+import { GOOGLE_ADSENSE_ID } from "@/constants";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("posts");
@@ -102,7 +103,7 @@ const relatedPosts = allPosts
             <TagsFooter tags={entry.data.tags ?? []} />
           </div>
         </div>
-        <NewsLatter />
+        <NewsLatter relatedPosts={relatedPosts} />
       </article>
       <!-- End Content -->
 
@@ -156,6 +157,40 @@ const relatedPosts = allPosts
     autoplayVideos.forEach((video) => {
       video.removeAttribute("autoplay");
       video.setAttribute("controls", "true");
+    });
+  }
+
+</script>
+
+<script define:vars={{ GOOGLE_ADSENSE_ID }}>
+  if (GOOGLE_ADSENSE_ID) {
+    document.addEventListener("DOMContentLoaded", () => {
+      const content = document.querySelector(".prose");
+      if (!content) return;
+
+      const headings = content.querySelectorAll("h2, h3");
+      headings.forEach((heading, index) => {
+        // Create ad container
+        const adContainer = document.createElement("div");
+        adContainer.className = "my-8 flex justify-center overflow-hidden";
+        adContainer.innerHTML = `
+          <!-- AdSense Unit -->
+          <!-- IMPORTANT: Replace data-ad-slot with your actual "In-article" ad unit ID from AdSense dashboard -->
+          <ins class="adsbygoogle"
+               style="display:block; text-align:center; min-width: 250px;"
+               data-ad-layout="in-article"
+               data-ad-format="fluid"
+               data-ad-client="${GOOGLE_ADSENSE_ID}"
+               data-ad-slot="YOUR_AD_SLOT_ID_HERE"></ins>
+        `;
+        heading.after(adContainer);
+        
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+          console.error("AdSense error:", e);
+        }
+      });
     });
   }
 </script>

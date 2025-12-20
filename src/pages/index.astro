@@ -7,27 +7,18 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "@/constants";
 
 const allPosts = await getCollection("posts");
 
-// Get first 2 featured posts (shown in Hero via BlogLayout)
-const featuredForHero = allPosts
-  .filter((post) => post.data.featured)
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
-  .slice(0, 2);
+// Sort all posts by date
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+);
 
-// Get IDs of posts shown in Hero to exclude them
-const heroPostIds = new Set(featuredForHero.map((p) => p.id));
-
-// All other posts (excluding Hero's 2), sorted by date
-const remainingPosts = allPosts
-  .filter((post) => !heroPostIds.has(post.id))
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
-
-// Homepage shows first 3 posts in FooterBlogRow
-const postsPerPage = 3;
-const totalPages = Math.ceil(remainingPosts.length / postsPerPage);
+// Homepage shows first 9 posts in FooterBlogRow (3x3 grid)
+const postsPerPage = 9;
+const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
 ---
 
 <BlogLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <FooterBlogRow posts={remainingPosts.slice(0, 3)} />
+  <FooterBlogRow posts={sortedPosts.slice(0, 9)} />
   <Pagination
     currentPage={1}
     totalPages={totalPages}

@@ -14,6 +14,7 @@ export const SITE_LANGUAGE = "ko";
 // Analytics
 // ======================
 export const GA_MEASUREMENT_ID = ""; // Replace with your Google Analytics Measurement ID
+export const GOOGLE_ADSENSE_ID = "ca-pub-9715188318907768";
 
 // ======================
 // SEO & Meta Tags

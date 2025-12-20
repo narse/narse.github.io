@@ -19,6 +19,17 @@ const formatDate = (date: Date | undefined) => {
 ---
 
 <article class="flex max-w-xl flex-col items-start justify-between">
+  {
+    post.data.coverImage && (
+      <a href={`/post/${post.id}`} class="mb-4 w-full overflow-hidden rounded-lg">
+        <img
+          src={post.data.coverImage}
+          alt={post.data.title}
+          class="aspect-[16/9] w-full object-cover shadow-sm transition duration-300 hover:shadow-md"
+        />
+      </a>
+    )
+  }
   <div class="flex items-center gap-x-4 text-xs">
     <time datetime={post.data.publishedAt?.toISOString()} class="text-gray-500"
       >{formatDate(post.data.publishedAt)}</time
