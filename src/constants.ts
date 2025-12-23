@@ -7,7 +7,7 @@ export const SITE_NAME = "지원금 25시";
 export const SITE_TITLE = "지원금 25시 - 정부지원금 정보 허브";
 export const SITE_DESCRIPTION =
   "정부지원금, 보조금, 복지혜택 정보를 한눈에! 최신 지원금 소식과 신청 방법을 빠르게 안내해드립니다.";
-export const SITE_URL = "https://narse.github.io"; // Your site's base URL (no trailing slash)
+export const SITE_URL = "https://gov24.guide365.kr"; // Your site's base URL (no trailing slash)
 export const SITE_LANGUAGE = "ko";
 
 // ======================

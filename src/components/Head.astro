@@ -140,4 +140,35 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
     gtag("js", new Date());
     gtag("config", GA_MEASUREMENT_ID);
   </script>
+
+  <!-- JSON-LD Structured Data -->
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": type === "article" ? "BlogPosting" : "WebSite",
+      "headline": fullTitle,
+      "description": description,
+      "image": ogImage ? [ogImage] : [],
+      "author": {
+        "@type": "Person",
+        "name": author,
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": SITE_NAME,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${SITE_URL}/favicon.svg`,
+        },
+      },
+      "datePublished": publishedTime,
+      "dateModified": modifiedTime || publishedTime,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": canonicalURL,
+      },
+    })}
+  />
 </head>
